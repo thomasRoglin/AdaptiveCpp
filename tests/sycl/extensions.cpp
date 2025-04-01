@@ -1285,11 +1285,21 @@ BOOST_AUTO_TEST_CASE(target_numa_node_property) {
   //otherwise the property also have no effect
   sycl::backend b = q.get_device().get_backend();
   if(b == sycl::backend::omp && numa_available() != -1){
-    BOOST_TEST(ptr_numa_no_node == nullptr);
-    BOOST_TEST(ptr_numa_first_available_node != nullptr);
-    BOOST_TEST(ptr_numa_max_node != nullptr);
-    BOOST_TEST(ptr_numa_non_available_node == nullptr);
-    BOOST_TEST(ptr_numa_all_available_nodes != nullptr);
+
+    if( numa_num_configured_nodes() != 0){
+      BOOST_TEST(ptr_numa_no_node == nullptr);
+      BOOST_TEST(ptr_numa_first_available_node != nullptr);
+      BOOST_TEST(ptr_numa_max_node != nullptr);
+      BOOST_TEST(ptr_numa_non_available_node == nullptr);
+      BOOST_TEST(ptr_numa_all_available_nodes != nullptr);
+    }
+    else{
+      BOOST_TEST(ptr_numa_no_node == nullptr);
+      BOOST_TEST(ptr_numa_first_available_node == nullptr);
+      BOOST_TEST(ptr_numa_max_node == nullptr);
+      BOOST_TEST(ptr_numa_non_available_node == nullptr);
+      BOOST_TEST(ptr_numa_all_available_nodes == nullptr);
+    }
   }
   else{
     BOOST_TEST(ptr_numa_no_node != nullptr);
