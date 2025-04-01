@@ -28,6 +28,9 @@
 #include <numa.h>
 #endif
 
+#include <iostream>
+
+
 BOOST_FIXTURE_TEST_SUITE(extension_tests, reset_device_fixture)
 
 #ifdef ACPP_EXT_AUTO_PLACEHOLDER_REQUIRE
@@ -1278,6 +1281,9 @@ BOOST_AUTO_TEST_CASE(target_numa_node_property) {
   numa_free_nodemask(available_bm);
 
   q.wait();
+
+  std::cout << "numa_available " << numa_available() << std::endl;
+  std::cout << "numa_num_configured_nodes " << numa_num_configured_nodes() << std::endl;
 
   //AdaptiveCpp_target_numa_node is only availble on the OpenMP backend.
   //Using the property with any other backend should have no effect.
