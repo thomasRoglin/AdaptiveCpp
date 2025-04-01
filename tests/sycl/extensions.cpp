@@ -1284,15 +1284,17 @@ BOOST_AUTO_TEST_CASE(target_numa_node_property) {
 
   std::cout << "numa_available " << numa_available() << std::endl;
   std::cout << "numa_num_configured_nodes " << numa_num_configured_nodes() << std::endl;
+  std::cout << "vec size " << available_nodes_vec.size() << std::endl;
 
-  //AdaptiveCpp_target_numa_node is only availble on the OpenMP backend.
+  // - AdaptiveCpp_target_numa_node is only availble on the OpenMP backend.
   //Using the property with any other backend should have no effect.
-  //Verify with numa_available() that the NUMA node are accessible,
-  //otherwise the property also have no effect
+  // - Verify with numa_available() that the system support
+  // NUMA policy
+  // - Even when the system support NUMA policy, NUMA node may not 
+  // be acces
   sycl::backend b = q.get_device().get_backend();
   if(b == sycl::backend::omp && numa_available() != -1){
-
-    if( numa_num_configured_nodes() != 0){
+    if(!available_nodes_vec.empty()){
       BOOST_TEST(ptr_numa_no_node == nullptr);
       BOOST_TEST(ptr_numa_first_available_node != nullptr);
       BOOST_TEST(ptr_numa_max_node != nullptr);
@@ -1300,6 +1302,7 @@ BOOST_AUTO_TEST_CASE(target_numa_node_property) {
       BOOST_TEST(ptr_numa_all_available_nodes != nullptr);
     }
     else{
+      //
       BOOST_TEST(ptr_numa_no_node == nullptr);
       BOOST_TEST(ptr_numa_first_available_node == nullptr);
       BOOST_TEST(ptr_numa_max_node == nullptr);
